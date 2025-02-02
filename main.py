@@ -1,6 +1,6 @@
 import os
 import sys
-import time  # <-- Pastikan library time sudah diimport
+import time
 import web3
 import json
 import string
@@ -11,9 +11,27 @@ from datetime import datetime, timedelta
 from eth_account.messages import encode_defunct
 from base64 import b64decode
 
+
+# Fungsi untuk menambahkan warna pada teks
+def colored_text(text, color_code):
+    return f"\033[{color_code}m{text}\033[0m"
+
+
+# Daftar kode warna ANSI
+COLORS = [
+    31,  # Merah
+    32,  # Hijau
+    33,  # Kuning
+    34,  # Biru
+    35,  # Ungu
+    36,  # Cyan
+]
+
+
 def log(msg):
     now = datetime.now().isoformat(" ").split(".")[0]
     print(f"[{now}] {msg}")
+
 
 def http(ses: requests.Session, url, data=None):
     attemp = 0
@@ -44,6 +62,7 @@ def http(ses: requests.Session, url, data=None):
         ):
             log(f"connection error !")
             attemp += 1
+
 
 class Start:
     def __init__(self, privatekey, proxy):
@@ -77,7 +96,10 @@ class Start:
                     "accept-language": "en-US,en;q=0.9",
                 }
             )
-            log(f"wallet addr : {self.wallet.address}")
+            # Log wallet address dengan warna random
+            color_code = random.choice(COLORS)
+            wallet_addr_colored = colored_text(self.wallet.address, color_code)
+            log(f"wallet addr : {wallet_addr_colored}")
             wallet_detail_url = f"https://referralapi.layeredge.io/api/referral/wallet-details/{self.wallet.address}"
             node_status_url = f"https://referralapi.{self.hostname}/api/light-node/node-status/{self.wallet.address}"
             daily_claim_url = (
@@ -143,11 +165,13 @@ class Start:
             log(f"error : {e}")
             return None
 
+
 def get_proxy(i, p):
     if len(p) <= 0:
         return None
     proxy = p[i % len(p)]
     return proxy
+
 
 def main():
     os.system("cls" if os.name == "nt" else "clear")
@@ -162,7 +186,6 @@ def main():
     print(f"total private key : {len(privatekeys)}")
     print(f"total proxy : {len(proxies)}")
     print()
-    
     for i, privatekey in enumerate(privatekeys):
         proxy = get_proxy(i, proxies)
         while True:
@@ -171,12 +194,14 @@ def main():
                 proxy = get_proxy(random.randint(1, len(privatekeys)), proxies)
                 continue
             break
-        
+
         print("~" * 50)
-        
-        # Tambahkan delay 1 menit setelah setiap akun
-        log("Waiting 1 minute before processing next account...")
-        time.sleep(20)  # 60 detik = 1 menit
+
+        # Tambahkan delay 20 detik sebelum memproses akun berikutnya
+        if i < len(privatekeys) - 1:  # Tidak perlu delay setelah akun terakhir
+            log("Waiting 20 seconds before processing next account...")
+            time.sleep(20)  # 20 detik
+
 
 if __name__ == "__main__":
     try:
