@@ -11,13 +11,13 @@ Automation for l a y e r e d g e
 2. Clone this repository:
 
    ```
-   git clone https://github.com/akasakaid/lazy-yerge.git
+   git clone https://github.com/stratos-core/layedg3.git
    ```
 
-3. Navigate into the `lazy-yerge` folder:
+3. Navigate into the `layedg3` folder:
 
    ```
-   cd lazy-yerge
+   cd layedg3
    ```
 
 4. Install the required libraries:
@@ -40,13 +40,13 @@ Automation for l a y e r e d g e
 2. Clone this repository:
 
    ```
-   git clone https://github.com/akasakaid/lazy-yerge.git
+   git clone https://github.com/stratos-core/layedg3.git
    ```
 
-3. Navigate into the `lazy-yerge` folder:
+3. Navigate into the `layedg3` folder:
 
    ```
-   cd lazy-yerge
+   cd layedg3
    ```
 
 4. Install the required libraries:
@@ -66,6 +66,3 @@ Automation for l a y e r e d g e
 
 - [https://sociabuzz.com/fawwazthoerif/tribe](https://sociabuzz.com/fawwazthoerif/tribe)
 
-# Discussion and Contact
-
-Telegram group: t.me/sdsproject_chat
