@@ -180,7 +180,7 @@ def main():
         # Tambahkan delay 1 menit sebelum memproses akun berikutnya
         if i < int(total_referral) - 1:  # Tidak perlu delay setelah akun terakhir
             log("Waiting 1 minute before processing next account...")
-            time.sleep(60)  # 60 detik = 1 menit
+            time.sleep(20)  # 60 detik = 1 menit
 
 
 if __name__ == "__main__":
