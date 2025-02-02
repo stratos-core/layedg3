@@ -1,15 +1,30 @@
 import os
 import sys
-import time  # <-- Pastikan library time sudah diimport
+import time
 import web3
 import json
-import string
 import random
 import requests
 import ua_generator
 from datetime import datetime
 from eth_account.messages import encode_defunct
 from base64 import b64decode
+
+
+# Fungsi untuk menambahkan warna pada teks
+def colored_text(text, color_code):
+    return f"\033[{color_code}m{text}\033[0m"
+
+
+# Daftar kode warna ANSI
+COLORS = [
+    31,  # Merah
+    32,  # Hijau
+    33,  # Kuning
+    34,  # Biru
+    35,  # Ungu
+    36,  # Cyan
+]
 
 
 def log(msg):
@@ -56,9 +71,7 @@ class Referral:
         headers = {
             "user-agent": ua_generator.generate().text,
         }
-
         self.ses.headers.update(headers)
-        # self.wallet = eth_account.Account.create()
         self.wallet = web3.Account.create()
         self.hostname = b64decode("bGF5ZXJlZGdlLmlv").decode()
 
@@ -84,10 +97,13 @@ class Referral:
                     "accept-language": "en-US,en;q=0.9",
                 }
             )
+            # Log wallet address dengan warna random
+            color_code = random.choice(COLORS)
+            wallet_addr_colored = colored_text(self.wallet.address, color_code)
+            log(f"wallet addr : {wallet_addr_colored}")
             verify_referral_code_url = (
                 f"https://referralapi.{self.hostname}/api/referral/verify-referral-code"
             )
-
             data = {"invite_code": referral_code}
             res = http(
                 ses=self.ses, url=verify_referral_code_url, data=json.dumps(data)
@@ -161,7 +177,7 @@ def get_proxy(i, p):
 
 def main():
     os.system("cls" if os.name == "nt" else "clear")
-    print(">\n> auto referrral l a y e r e d g e !\n>")
+    print(">\n> auto referral l a y e r e d g e !\n>")
     print()
     proxies = open("proxies.txt").read().splitlines()
     print(f"total proxy : {len(proxies)}")
@@ -176,11 +192,11 @@ def main():
         proxy = get_proxy(i, proxies)
         Referral(proxy=proxy).start(referral_code=referral_code)
         print("~" * 50)
-        
-        # Tambahkan delay 1 menit sebelum memproses akun berikutnya
+
+        # Tambahkan delay 20 detik sebelum memproses akun berikutnya
         if i < int(total_referral) - 1:  # Tidak perlu delay setelah akun terakhir
-            log("Waiting 1 minute before processing next account...")
-            time.sleep(20)  # 60 detik = 1 menit
+            log("Waiting 20 seconds before processing next account...")
+            time.sleep(20)  # 20 detik
 
 
 if __name__ == "__main__":
