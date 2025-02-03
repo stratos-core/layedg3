@@ -157,9 +157,9 @@ class Start:
                     log(f"http response : {res.text}")
                     return None
                 log("success start node !")
-                return True
+                return point  # Mengembalikan node points untuk diakumulasi
             log("node already started !")
-            return True
+            return point  # Mengembalikan node points untuk diakumulasi
         except Exception as e:
             log(f"error : {e}")
             return None
@@ -185,6 +185,9 @@ def main():
     print(f"total private key : {len(privatekeys)}")
     print(f"total proxy : {len(proxies)}")
     print()
+
+    total_node_points = 0  # Variabel untuk menyimpan total node points
+
     for i, privatekey in enumerate(privatekeys):
         proxy = get_proxy(i, proxies)
         while True:
@@ -194,6 +197,10 @@ def main():
                 continue
             break
 
+        # Akumulasi total node points
+        if st is not None:
+            total_node_points += st
+
         print("~" * 50)
 
         # Delay acak 20-50 detik sebelum akun berikutnya
@@ -201,6 +208,9 @@ def main():
             delay = random.randint(20, 50)  # <-- Delay acak 20-50 detik
             log(f"Waiting {delay} seconds before next account...")
             time.sleep(delay)  # <-- Gunakan variabel delay
+
+    # Tampilkan total node points setelah semua akun diproses
+    log(f"Total node points from all accounts: {total_node_points}")
 
 
 if __name__ == "__main__":
