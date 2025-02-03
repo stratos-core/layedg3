@@ -3,7 +3,6 @@ import sys
 import time
 import web3
 import json
-import string
 import random
 import requests
 import ua_generator
@@ -197,10 +196,11 @@ def main():
 
         print("~" * 50)
 
-        # Tambahkan delay 20 detik sebelum memproses akun berikutnya
+        # Delay acak 20-50 detik sebelum akun berikutnya
         if i < len(privatekeys) - 1:  # Tidak perlu delay setelah akun terakhir
-            log("Waiting 20 seconds before processing next account...")
-            time.sleep(20)  # 20 detik
+            delay = random.randint(20, 50)  # <-- Delay acak 20-50 detik
+            log(f"Waiting {delay} seconds before next account...")
+            time.sleep(delay)  # <-- Gunakan variabel delay
 
 
 if __name__ == "__main__":
