@@ -10,6 +10,20 @@ from datetime import datetime, timedelta
 from eth_account.messages import encode_defunct
 from base64 import b64decode
 
+# Untuk suara notifikasi
+if os.name == "nt":  # Windows
+    import winsound
+elif os.name == "posix":  # macOS/Linux
+    import os
+
+
+# Fungsi untuk memainkan suara notifikasi
+def play_notification_sound():
+    if os.name == "nt":  # Windows
+        winsound.Beep(1000, 500)  # Frekuensi 1000 Hz, durasi 500 ms
+    elif os.name == "posix":  # macOS/Linux
+        os.system('afplay /System/Library/Sounds/Ping.aiff')  # Menggunakan suara default "Ping"
+
 
 # Fungsi untuk menambahkan warna pada teks
 def colored_text(text, color_code):
@@ -77,7 +91,7 @@ class Start:
         try:
             res = http(ses=self.ses, url="https://ipv4.webshare.io")
             if res is None:
-                return None
+                return 0  # Mengembalikan 0 jika gagal
             log(f"start with ip {res.text}")
             self.ses.headers.update(
                 {
@@ -105,8 +119,10 @@ class Start:
                 f"https://referralapi.{self.hostname}/api/light-node/claim-node-points"
             )
             res = http(ses=self.ses, url=wallet_detail_url)
+            if res is None:
+                return 0  # Mengembalikan 0 jika gagal
             ref_code = res.json().get("data", {}).get("referralCode")
-            point = res.json().get("data", {}).get("nodePoints")
+            point = res.json().get("data", {}).get("nodePoints", 0)  # Default 0 jika tidak ada
             last_claim = res.json().get("data", {}).get("lastClaimed")
             if last_claim is None:
                 last_claim = (datetime.now() - timedelta(days=1)).isoformat()
@@ -128,13 +144,15 @@ class Start:
                 res = http(
                     ses=self.ses, url=daily_claim_url, data=json.dumps(daily_claim_data)
                 )
+                if res is None:
+                    return point  # Mengembalikan point yang sudah ada
                 if res.json().get("message") == "node points claimed successfully":
                     log(f"success claim daily point !")
                 else:
                     log(f"failed claim daily point !")
             res = http(ses=self.ses, url=node_status_url)
             if res is None:
-                return None
+                return point  # Mengembalikan point yang sudah ada
             start_time = res.json().get("data", {}).get("startTimestamp")
             if start_time is None:
                 start_url = f"https://referralapi.{self.hostname}/api/light-node/node-action/{self.wallet.address}/start"
@@ -151,18 +169,18 @@ class Start:
                 }
                 res = http(ses=self.ses, url=start_url, data=json.dumps(data))
                 if res is None:
-                    return None
+                    return point  # Mengembalikan point yang sudah ada
                 if not "node action executed successfully" in res.json().get("message"):
                     log(f"failed start node !")
                     log(f"http response : {res.text}")
-                    return None
+                    return point  # Mengembalikan point yang sudah ada
                 log("success start node !")
-                return point  # Mengembalikan node points untuk diakumulasi
-            log("node already started !")
-            return point  # Mengembalikan node points untuk diakumulasi
+            else:
+                log("node already started !")
+            return point  # Mengembalikan node points
         except Exception as e:
             log(f"error : {e}")
-            return None
+            return 0  # Mengembalikan 0 jika terjadi error
 
 
 def get_proxy(i, p):
@@ -198,8 +216,11 @@ def main():
             break
 
         # Akumulasi total node points
-        if st is not None:
-            total_node_points += st
+        total_node_points += st
+        log(f"Current total node points: {total_node_points}")  # Log sementara
+
+        # Mainkan suara notifikasi
+        play_notification_sound()
 
         print("~" * 50)
 
