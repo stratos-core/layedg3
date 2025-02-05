@@ -17,7 +17,8 @@ def play_notification_sound():
     beep_path = "/storage/emulated/0/beep.mp3"  # Contoh: di penyimpanan internal
     # Pastikan file ada
     if os.path.exists(beep_path):
-        os.system(f"termux-media-player play {beep_path}")
+        # Arahkan output ke /dev/null untuk menyembunyikan log "Now playing"
+        os.system(f"termux-media-player play {beep_path} > /dev/null 2>&1")
     else:
         print("File beep.mp3 tidak ditemukan!")
 
