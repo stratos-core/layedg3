@@ -10,19 +10,16 @@ from datetime import datetime, timedelta
 from eth_account.messages import encode_defunct
 from base64 import b64decode
 
-# Untuk suara notifikasi
-if os.name == "nt":  # Windows
-    import winsound
-elif os.name == "posix":  # macOS/Linux
-    import os
-
 
 # Fungsi untuk memainkan suara notifikasi
 def play_notification_sound():
-    if os.name == "nt":  # Windows
-        winsound.Beep(1000, 500)  # Frekuensi 1000 Hz, durasi 500 ms
-    elif os.name == "posix":  # macOS/Linux
-        os.system('afplay /System/Library/Sounds/Ping.aiff')  # Menggunakan suara default "Ping"
+    # Path ke file beep.mp3 (sesuaikan dengan lokasi file Anda)
+    beep_path = "/storage/emulated/0/beep.mp3"  # Contoh: di penyimpanan internal
+    # Pastikan file ada
+    if os.path.exists(beep_path):
+        os.system(f"termux-media-player play {beep_path}")
+    else:
+        print("File beep.mp3 tidak ditemukan!")
 
 
 # Fungsi untuk menambahkan warna pada teks
